@@ -9,15 +9,15 @@ from sb3_contrib.ppo_mask import MaskablePPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import VecVideoRecorder
 
-from gym_microrts import microrts_ai
-from gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv
+from micrortspy.gym_microrts import microrts_ai
+from micrortspy.gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv
 
+import wandb
+from wandb.integration.sb3 import WandbCallback
 
 #File and map management
 map_size = "8x8"
 folder_path = f"{map_size}_maskedPPO"
-
-
 
 def mask_fn(env: gym.Env) -> np.ndarray:
     action_mask = env._envs.get_action_mask()
@@ -32,7 +32,25 @@ envs = MicroRTSGridModeVecEnv(
     map_paths=[ f"maps/{map_size}/basesWorkers{map_size}.xml"],
     reward_weight=np.array([10.0, 2.0, 2.0, 0.2, 2.0, 6.0]),
 )
-envs = VecVideoRecorder(envs, "videos", record_video_trigger=lambda x: x % 4000 == 0, video_length=2000)
+
+config = {
+    "policy_type": "MlpPolicy",
+    "total_timesteps": 1000*2048,
+    "env_id": "Masked_PPO",
+    "key": "4d9e1289ccdb686147134cc95a22c0ab0fedc6a2",
+}
+
+api = wandb.Api()
+
+run = wandb.init(
+    project="sb3",
+    config=config,
+    sync_tensorboard=True,  # auto-upload sb3's tensorboard metrics
+    # monitor_gym=True,  # auto-upload the videos of agents playing the game
+    # save_code=True,  # optional
+)
+
+# envs = VecVideoRecorder(envs, "videos", record_video_trigger=lambda x: x % 4000 == 0, video_length=2000)
 
 class CustomEnv(gym.Env):
     
@@ -71,7 +89,7 @@ def initTrainedModels(env):
         return MaskablePPO.load(f"./{folder_path}/{iteration}", env, device="cpu"), iteration + 1 #+1 for next in line
     else:
         print("No previous sessions found")
-        return MaskablePPO("MlpPolicy", env, verbose=2, device="cpu"), 0
+        return MaskablePPO("MlpPolicy", env, verbose=2, device="cpu", tensorboard_log=f"runs/{run.id}"), 0
 
 
 #env creation with action mask wrapper as well
@@ -80,6 +98,14 @@ env = ActionMasker(env, mask_fn)
 
 #training
 model, iteration = initTrainedModels(env)
-while True:
-    model.learn(total_timesteps=4*2048)
-    model.save(f"./{folder_path}/{iteration}")
+
+model.learn(
+    total_timesteps=1000*2048,
+    callback=WandbCallback(
+        model_save_path=f"models/{run.id}",
+        verbose=2,
+))
+
+model.save(f"./{folder_path}/{iteration}")
+
+run.finish()
