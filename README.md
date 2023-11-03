@@ -1,7 +1,7 @@
 Hello and welcome to our 5.th semester project. This project is dedicated continue the development of maskable PPO solutions for the MicroRTS environment. 
 There currently exist two solutions: Mrts_PPO_p5, which is by far the most effective solution and much simpler than the second solution which wraps the MicroRTS-environment in a gym-environment in order to access the SB3-contrib implementation of maskedPPO. The SB3 solution requires strictly dependent on several deprecated modules and it is there highly recommended that you use the first soltuion in combination with Torch==2.0.1, as it is able to run environments in parallel, versus, SB3, which can only run a single. Mrts_PPO_p5 also has an SPS of 1400+, where the SB3-solution has an SPS of 13.
 
-===========================================================SB3 solution guide===========================================================
+======================SB3 solution guide==========================
 Setup guide for SB3-solution:
 1. Lav en my mappe med et nyt env:
 2. python3.9 -m venv --without-pip myenv
@@ -23,7 +23,7 @@ ep_info = {"r": round(float(ep_rew), 6), "l": ep_len, "t": round(ep_time, 6)}
 Issue 3: set training mode:
  -Comment den out når den popper up
 
-===========================================================Mrts_PPO_p5 guide===========================================================
+========================Mrts_PPO_p5 guide=========================
 1. Install MicroRTS by following the official gude: https://github.com/Farama-Foundation/MicroRTS-Py
 2. install Torch version 2.0.0 for better performance on GPU (optional).
 3. Add the Mrts_PPO_p5 folder to your MicroRTS folder.
