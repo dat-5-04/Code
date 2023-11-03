@@ -7,13 +7,14 @@ import torch.nn as nn
 import rtsUtils
 
 class PPOTrainer:
-    def __init__(self, args, envs, agent, writer, optimizer, device, printParams = True):
+    def __init__(self, args, envs, agent, writer, optimizer, device, modelName, printParams = True):
         self.args = args
         self.envs = envs
         self.agent = agent
         self.writer = writer
         self.optimizer = optimizer
         self.device = device
+        self.modelName = modelName
         
 
         #init of learnign rate lambda, device spaces etc. 
@@ -208,7 +209,7 @@ class PPOTrainer:
             v_loss,pg_loss,entropy,approx_kl,i_epoch_pi = self.optimizePolicyAndVal(b_advantages, b_obs, b_actions, b_invalid_action_masks,b_logprobs, b_values, b_returns)
             
             #save model with frequency as arg
-            rtsUtils.saveModel(self.agent,self.args,update,self.global_step,"testName")
+            rtsUtils.saveModel(self.agent,self.args,update,self.global_step, self.modelName)
 
             #write the current update to the log so it is accesible from TF
             self.writeLog(update,v_loss,pg_loss,entropy,approx_kl,i_epoch_pi)
