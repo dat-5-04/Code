@@ -36,7 +36,7 @@ if __name__ == "__main__":
     writer = SummaryWriter(f"log/{experiment_name}")
     writer.add_text("hyperparameters", "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])))
 
-    model = maskedPPO.PPOTrainer(args,envs,agent,writer,optimizer,device)
+    model = maskedPPO.PPOTrainer(args,envs,agent,writer,optimizer,device,"modelNameHere")
     model.train()
     
     envs.close()
