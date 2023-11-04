@@ -2,7 +2,7 @@ import numpy as np
 
 from gym.spaces import MultiDiscrete
 from stable_baselines3.common.vec_env import VecEnvWrapper, VecMonitor, VecVideoRecorder
-from gym_microrts import microrts_ai
+
 from gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv
 
 class MicroRTSStatsRecorder(VecEnvWrapper):
@@ -42,17 +42,14 @@ class MicroRTSStatsRecorder(VecEnvWrapper):
         return obs, rews, dones, newinfos
 
 
-def envInitializer(args):
+def envInitializer(args, ai2s):
     envs = MicroRTSGridModeVecEnv(
         num_selfplay_envs=args.num_selfplay_envs,
         num_bot_envs=args.num_bot_envs,
         partial_obs=args.partial_obs,
         max_steps=2000,
         render_theme=2,
-        ai2s=[microrts_ai.coacAI for _ in range(args.num_bot_envs - 6)]
-        + [microrts_ai.randomBiasedAI for _ in range(min(args.num_bot_envs, 2))]
-        + [microrts_ai.lightRushAI for _ in range(min(args.num_bot_envs, 2))]
-        + [microrts_ai.workerRushAI for _ in range(min(args.num_bot_envs, 2))],
+        ai2s=ai2s,
         map_paths=[args.train_maps[0]],
         reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
         cycle_maps=args.train_maps,
