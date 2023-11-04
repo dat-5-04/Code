@@ -38,6 +38,21 @@ def getTorchDevice(args):
     print(f"Device: {device}")
     return device
 
+def calculateWinRate(update,modelScore,aiScore, result):
+    print(result)
+    if(result == "-1"):
+        aiScore += 1
+    else:
+        modelScore +=1
+    
+    #there are draws as well hence 1-winrate is not used to calc the other's winrate
+    winrateModel = modelScore/update
+    winrateAI = aiScore/update
+
+    print("AI winrate: ", winrateAI)
+    print("Model winrate: ", winrateModel)
+    return modelScore, aiScore
+    
 
 
 
