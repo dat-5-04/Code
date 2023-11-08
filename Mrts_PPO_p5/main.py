@@ -25,6 +25,7 @@ if __name__ == "__main__":
 
     #Everything optional for the train
     experiment_name = f"{args.gym_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
+    experiment_log_name = "insert logfolder name here"
     device = rtsUtils.getTorchDevice(args) #get device
     
     envs = envInitializer.envInitializer(args=args, ai2s = 
