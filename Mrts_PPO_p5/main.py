@@ -34,7 +34,7 @@ if __name__ == "__main__":
         + [microrts_ai.workerRushAI for _ in range(min(args.num_bot_envs, 2))]
     )
     
-    agent = agentSetup.Agent(envs).to(device)
+    agent = agentSetup.AgentSmall(envs).to(device) # chose between agentSmall and AgentLarge, 200k vs 800k paramenters in NN architecture
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     writer = SummaryWriter(f"log/{experiment_name}")
