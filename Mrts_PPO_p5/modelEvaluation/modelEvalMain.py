@@ -1,34 +1,16 @@
-# http://proceedings.mlr.press/v97/han19a/han19a.pdf
 
-import argparse
-import os
 import random
 import time
-from distutils.util import strtobool
-
-from distutils.util import strtobool
-import numpy as np
-import torch
-import torch.nn as nn
-from torch.distributions.categorical import Categorical
-
 
 import numpy as np
 import torch
-from gym.spaces import MultiDiscrete
-from stable_baselines3.common.vec_env import VecMonitor, VecVideoRecorder
 from torch.utils.tensorboard import SummaryWriter
-
-from gym_microrts import microrts_ai  # noqa
-
-
-import sys
-sys.path.append('../')  # Add the outer folder to the sys.path 
 import agentSetup
 import evalArgParser
 import envInitializer
-
-
+import rtsUtils
+import sys
+sys.path.append('../')  # Add the outer folder to the sys.path 
 
 
 if __name__ == "__main__":
@@ -39,7 +21,7 @@ if __name__ == "__main__":
     writer.add_text( "hyperparameters", "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])))
 
     # TRY NOT TO MODIFY: seeding
-    device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
+    device = rtsUtils.getTorchDevice(args)
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -59,7 +41,10 @@ if __name__ == "__main__":
     starting_update = 1
     model.load_state_dict(torch.load(args.agent_model_path, map_location=device))
     model.eval()
-    
+    rounds = 0
+    modelScore = 0
+    aiScore = 0
+
     for update in range(starting_update, args.num_updates + 1):
         # TRY NOT TO MODIFY: prepare the execution of the game.
         for step in range(0, args.num_steps):
@@ -83,8 +68,9 @@ if __name__ == "__main__":
             for idx, info in enumerate(infos):
                 if "episode" in info.keys():
                     if args.ai:
-                        print("against", args.ai, info["microrts_stats"]["WinLossRewardFunction"])
-                   
+                        rounds += 1
+                        rtsUtils.calculateWinRate(rounds,modelScore,aiScore, info["microrts_stats"]["WinLossRewardFunction"])
+
 
     envs.close()
     writer.close()

@@ -33,21 +33,19 @@ def calculateActionShapes(mapsize, envs):
     return action_space_shape, invalid_action_shape
 
 def getTorchDevice(args):
-    use_cuda = torch.cuda.is_available() and args.cuda
-    device = torch.device("cuda" if use_cuda else "cpu")
-    print(f"Device: {device}")
+    device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
+    print(f"Device: {device} for this session")
     return device
 
-def calculateWinRate(update,modelScore,aiScore, result):
-    print(result)
+def calculateWinRate(rounds,modelScore,aiScore, result):
     if(result == "-1"):
         aiScore += 1
     else:
         modelScore +=1
     
     #there are draws as well hence 1-winrate is not used to calc the other's winrate
-    winrateModel = modelScore/update
-    winrateAI = aiScore/update
+    winrateModel = modelScore/rounds
+    winrateAI = aiScore/rounds
 
     print("AI winrate: ", winrateAI)
     print("Model winrate: ", winrateModel)
