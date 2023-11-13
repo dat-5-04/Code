@@ -68,8 +68,8 @@ if __name__ == "__main__":
             for idx, info in enumerate(infos):
                 if "episode" in info.keys():
                     if args.ai:
-                        rounds += 1
-                        rtsUtils.calculateWinRate(rounds,modelScore,aiScore, info["microrts_stats"]["WinLossRewardFunction"])
+                       rounds += 1
+                       modelScore, aiScore = rtsUtils.calculateWinRate(rounds, modelScore, aiScore, info["microrts_stats"]["WinLossRewardFunction"])
 
 
     envs.close()
