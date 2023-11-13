@@ -21,6 +21,8 @@ def parse_args():
         help='the opponent AI to evaluate against')
     parser.add_argument('--train-maps', nargs='+', default=["maps/16x16/basesWorkers16x16A.xml"],
         help='the list of maps used during training')
+    parser.add_argument('--gamma', type=float, default=0.99,
+        help='the discount factor gamma')
     args = parser.parse_args()
 
     if args.ai:
