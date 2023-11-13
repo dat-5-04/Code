@@ -4,23 +4,6 @@ from gym_microrts import microrts_ai
 import numpy as np
 
 def parse_args():
-    args.num_envs = args.num_selfplay_envs + args.num_bot_envs
-    args.batch_size = int(args.num_envs * args.num_steps)
-    args.minibatch_size = int(args.batch_size // args.n_minibatch)
-    args.num_updates = args.total_timesteps // args.batch_size
-    args.save_frequency = max(1, int(args.num_updates // args.num_models))
-    args.mapsize = 16*16
-    args.record_video = False
-    args.experiment_name = "Name_Here"
-    args.reward_weights = np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0])
-    args.max_env_steps =1024
-
-    args.ai2s = [microrts_ai.coacAI for _ in range(args.num_bot_envs - 6)]
-    + [microrts_ai.randomBiasedAI for _ in range(min(args.num_bot_envs, 2))]
-    + [microrts_ai.lightRushAI for _ in range(min(args.num_bot_envs, 2))]
-    + [microrts_ai.workerRushAI for _ in range(min(args.num_bot_envs, 2))]
-
-
     # fmt: off
     parser = argparse.ArgumentParser()
     parser.add_argument('--learning-rate', type=float, default=2.5e-4,
@@ -83,5 +66,15 @@ def parse_args():
         help='the list of maps used during evaluation')
 
     args = parser.parse_args()
-    # fmt: on
+    args.num_envs = args.num_selfplay_envs + args.num_bot_envs
+    args.batch_size = int(args.num_envs * args.num_steps)
+    args.minibatch_size = int(args.batch_size // args.n_minibatch)
+    args.num_updates = args.total_timesteps // args.batch_size
+    args.save_frequency = max(1, int(args.num_updates // args.num_models))
+    args.mapsize = 16*16
+    args.record_video = False
+    args.experiment_name = "Name_Here"
+    args.reward_weights = np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0])
+    args.max_env_steps =1024
+    args.ai2s =[microrts_ai.coacAI for _ in range(args.num_bot_envs - 6)] + [microrts_ai.randomBiasedAI for _ in range(min(args.num_bot_envs, 2))] + [microrts_ai.lightRushAI for _ in range(min(args.num_bot_envs, 2))]+ [microrts_ai.workerRushAI for _ in range(min(args.num_bot_envs, 2))]
     return args

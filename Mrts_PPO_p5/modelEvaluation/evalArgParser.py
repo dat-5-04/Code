@@ -4,16 +4,6 @@ from distutils.util import strtobool
 
 
 def parse_args():
-    args.num_envs = args.num_selfplay_envs + args.num_bot_envs
-    args.batch_size = int(args.num_envs * args.num_steps)
-    args.num_updates = args.total_timesteps // args.batch_size
-    args.mapsize = 16*16
-    args.experiment_name = "Name_Here"
-    args.record_video = False
-    args.ai2s=[eval(f"microrts_ai.{args.ai}")]
-    args.reward_weights = np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0])
-    args.max_env_steps =1024
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--total-timesteps', type=int, default=1000000,
         help='total timesteps of the experiments')
@@ -37,4 +27,14 @@ def parse_args():
         args.num_bot_envs, args.num_selfplay_envs = 1, 0
     else:
         args.num_bot_envs, args.num_selfplay_envs = 0, 2
+
+    args.num_envs = args.num_selfplay_envs + args.num_bot_envs
+    args.batch_size = int(args.num_envs * args.num_steps)
+    args.num_updates = args.total_timesteps // args.batch_size
+    args.mapsize = 16*16
+    args.experiment_name = "Name_Here"
+    args.record_video = False
+    args.ai2s=[eval(f"microrts_ai.{args.ai}")]
+    args.reward_weights = np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0])
+    args.max_env_steps =1024
     return args

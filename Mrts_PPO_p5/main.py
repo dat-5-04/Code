@@ -6,8 +6,6 @@ import envInitializer
 import rtsUtils
 import maskedPPO
 
-
-
 if __name__ == "__main__":
     #Parsed arguments
     args = argParserInit.parse_args()
@@ -21,7 +19,7 @@ if __name__ == "__main__":
 
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
-    writer = SummaryWriter(f"log/{args.experiment_name}")
+    writer = SummaryWriter(f"{args.experiment_name}/{args.experiment_name}_log")
     writer.add_text("hyperparameters", "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])))
 
     model = maskedPPO.PPOTrainer(args,envs,agent,writer,optimizer,device)

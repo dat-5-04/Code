@@ -138,3 +138,4 @@ class AgentLarge(BaseAgent):
             layer_init(nn.Linear(128, 1), std=1),
         )
         self.register_buffer("mask_value", torch.tensor(-1e8))
+
