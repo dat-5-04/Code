@@ -35,8 +35,7 @@ if __name__ == "__main__":
     args = evalArgParser.parse_args()
 
     # TRY NOT TO MODIFY: setup the environment
-    experiment_name = f"{args.gym_id}__{args.exp_name}__{args.seed}__{int(time.time())}"
-    writer = SummaryWriter(f"runs/{experiment_name}")
+    writer = SummaryWriter(f"runs/{args.experiment_name}")
     writer.add_text( "hyperparameters", "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])))
 
     # TRY NOT TO MODIFY: seeding
@@ -46,15 +45,13 @@ if __name__ == "__main__":
     torch.manual_seed(args.seed)
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
-    envs = envInitializer.envInitializer(args,ai2s=[eval(f"microrts_ai.{args.ai}")])
+    envs = envInitializer.envInitializer(args)
     model = agentSetup.Agent(envs).to(device)
     invalid_action_shape = (args.mapsize, envs.action_plane_space.nvec.sum())
 
     # TRY NOT TO MODIFY: start the game
     global_step = 0
     start_time = time.time()
-    # Note how `next_obs` and `next_done` are used; their usage is equivalent to
-    # https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail/blob/84a7582477fb0d5c82ad6d850fe476829dddd2e1/a2c_ppo_acktr/storage.py#L60
     next_obs = torch.Tensor(envs.reset()).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
 
@@ -63,8 +60,6 @@ if __name__ == "__main__":
     model.load_state_dict(torch.load(args.agent_model_path, map_location=device))
     model.eval()
     
-
-
     for update in range(starting_update, args.num_updates + 1):
         # TRY NOT TO MODIFY: prepare the execution of the game.
         for step in range(0, args.num_steps):

@@ -1,33 +1,38 @@
 import argparse
-import os
-import time
 from distutils.util import strtobool
+from gym_microrts import microrts_ai
+import numpy as np
 
 def parse_args():
+    args.num_envs = args.num_selfplay_envs + args.num_bot_envs
+    args.batch_size = int(args.num_envs * args.num_steps)
+    args.minibatch_size = int(args.batch_size // args.n_minibatch)
+    args.num_updates = args.total_timesteps // args.batch_size
+    args.save_frequency = max(1, int(args.num_updates // args.num_models))
+    args.mapsize = 16*16
+    args.record_video = False
+    args.experiment_name = "Name_Here"
+    args.reward_weights = np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0])
+    args.max_env_steps =1024
+
+    args.ai2s = [microrts_ai.coacAI for _ in range(args.num_bot_envs - 6)]
+    + [microrts_ai.randomBiasedAI for _ in range(min(args.num_bot_envs, 2))]
+    + [microrts_ai.lightRushAI for _ in range(min(args.num_bot_envs, 2))]
+    + [microrts_ai.workerRushAI for _ in range(min(args.num_bot_envs, 2))]
+
+
     # fmt: off
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp-name', type=str, default=os.path.basename(__file__).rstrip(".py"),
-        help='the name of this experiment')
-    parser.add_argument('--gym-id', type=str, default="MicroRTSGridModeVecEnv",
-        help='the id of the gym environment')
     parser.add_argument('--learning-rate', type=float, default=2.5e-4,
         help='the learning rate of the optimizer')
     parser.add_argument('--seed', type=int, default=1,
         help='seed of the experiment')
-    parser.add_argument('--total-timesteps', type=int, default=50000000,
+    parser.add_argument('--total-timesteps', type=int, default=300000000,
         help='total timesteps of the experiments')
     parser.add_argument('--torch-deterministic', type=lambda x: bool(strtobool(x)), default=True, nargs='?', const=True,
         help='if toggled, `torch.backends.cudnn.deterministic=False`')
     parser.add_argument('--cuda', type=lambda x: bool(strtobool(x)), default=True, nargs='?', const=True,
         help='if toggled, cuda will not be enabled by default')
-    parser.add_argument('--prod-mode', type=lambda x: bool(strtobool(x)), default=False, nargs='?', const=True,
-        help='run the script in production mode and use wandb to log outputs')
-    parser.add_argument('--capture-video', type=lambda x: bool(strtobool(x)), default=True, nargs='?', const=True,
-        help='whether to capture videos of the agent performances (check out `videos` folder)')
-    parser.add_argument('--wandb-project-name', type=str, default="gym-microrts",
-        help="the wandb's project name")
-    parser.add_argument('--wandb-entity', type=str, default=None,
-        help="the entity (team) of wandb's project")
 
     # Algorithm specific arguments
     parser.add_argument('--partial-obs', type=lambda x: bool(strtobool(x)), default=False, nargs='?', const=True,
@@ -38,7 +43,7 @@ def parse_args():
         help='the number of bot game environment; 16 bot envs means 16 games')
     parser.add_argument('--num-selfplay-envs', type=int, default=24,
         help='the number of self play envs; 16 self play envs means 8 games')
-    parser.add_argument('--num-steps', type=int, default=256,
+    parser.add_argument('--num-steps', type=int, default=512,
         help='the number of steps per game environment')
     parser.add_argument('--gamma', type=float, default=0.99,
         help='the discount factor gamma')
@@ -72,19 +77,11 @@ def parse_args():
         help='the number of models saved')
     parser.add_argument('--max-eval-workers', type=int, default=4,
         help='the maximum number of eval workers (skips evaluation when set to 0)')
-    parser.add_argument('--train-maps', nargs='+', default=["maps/8x8/basesWorkers8x8.xml"],
+    parser.add_argument('--train-maps', nargs='+', default=["maps/16x16/basesWorkers16x16A.xml"],
         help='the list of maps used during training')
-    parser.add_argument('--eval-maps', nargs='+', default=["maps/8x8/basesWorkers8x8.xml"],
+    parser.add_argument('--eval-maps', nargs='+', default=["maps/16x16/basesWorkers16x16A.xml"],
         help='the list of maps used during evaluation')
 
     args = parser.parse_args()
-    if not args.seed:
-        args.seed = int(time.time())
-    args.num_envs = args.num_selfplay_envs + args.num_bot_envs
-    args.batch_size = int(args.num_envs * args.num_steps)
-    args.minibatch_size = int(args.batch_size // args.n_minibatch)
-    args.num_updates = args.total_timesteps // args.batch_size
-    args.save_frequency = max(1, int(args.num_updates // args.num_models))
-    args.mapsize = 8*8
     # fmt: on
     return args

@@ -1,8 +1,6 @@
 import numpy as np
-
 from gym.spaces import MultiDiscrete
 from stable_baselines3.common.vec_env import VecEnvWrapper, VecMonitor, VecVideoRecorder
-
 from gym_microrts.envs.vec_env import MicroRTSGridModeVecEnv
 
 class MicroRTSStatsRecorder(VecEnvWrapper):
@@ -42,23 +40,23 @@ class MicroRTSStatsRecorder(VecEnvWrapper):
         return obs, rews, dones, newinfos
 
 
-def envInitializer(args, ai2s):
+def envInitializer(args):
     envs = MicroRTSGridModeVecEnv(
         num_selfplay_envs=args.num_selfplay_envs,
         num_bot_envs=args.num_bot_envs,
         partial_obs=args.partial_obs,
-        max_steps=2000,
+        max_steps=args.max_env_steps,
         render_theme=2,
-        ai2s=ai2s,
+        ai2s=args.ai2s,
         map_paths=[args.train_maps[0]],
-        reward_weight=np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0]),
+        reward_weight=args.reward_weights,
         cycle_maps=args.train_maps,
     )
 
     envs = MicroRTSStatsRecorder(envs, args.gamma)
     envs = VecMonitor(envs)
 
-    if True:
+    if args.record_video:
         envs = VecVideoRecorder(envs, f"videos/Experiment", record_video_trigger=lambda x: x % 100000 == 0, video_length=2000)
         
     assert isinstance(envs.action_space, MultiDiscrete), "only MultiDiscrete action space is supported"
