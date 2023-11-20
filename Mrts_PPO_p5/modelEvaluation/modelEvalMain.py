@@ -47,7 +47,11 @@ if __name__ == "__main__":
     rounds = 0
     modelScore = 0
     aiScore = 0
-    totalGameLen = 0
+    totalWinLen = 0
+    totalLossLen = 0
+    totalWins = 0
+    totalLoss = 0
+
 
     for update in range(starting_update, args.num_updates + 1):
         # TRY NOT TO MODIFY: prepare the execution of the game.
@@ -73,7 +77,7 @@ if __name__ == "__main__":
                 if "episode" in info.keys():
                     if args.ai:
                        rounds =rounds + 1
-                       totalGameLen = rtsUtils.calculateAvgGameLen(totalGameLen, info["episode"]["l"] ,rounds)
+                       totalWinLen,totalLossLen, totalWins, totalLoss = rtsUtils.calculateAvgGameLen(totalWinLen, info["episode"]["l"], totalLossLen, totalWins, totalLoss , info["microrts_stats"]["WinLossRewardFunction"] ,rounds)
                        modelScore, aiScore = rtsUtils.calculateWinRate(rounds, modelScore, aiScore, info["microrts_stats"]["WinLossRewardFunction"])
 
     envs.close()
