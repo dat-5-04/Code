@@ -26,7 +26,7 @@ def parse_args():
         help='the number of bot game environment; 16 bot envs means 16 games')
     parser.add_argument('--num-selfplay-envs', type=int, default=24,
         help='the number of self play envs; 16 self play envs means 8 games')
-    parser.add_argument('--num-steps', type=int, default=512,
+    parser.add_argument('--num-steps', type=int, default=,
         help='the number of steps per game environment')
     parser.add_argument('--gamma', type=float, default=0.99,
         help='the discount factor gamma')

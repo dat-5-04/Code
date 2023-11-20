@@ -1,16 +1,19 @@
 
 import random
 import time
-
+import sys
 import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
+
+sys.path.append('../')  # Add the outer folder to the sys.path 
 import agentSetup
 import evalArgParser
 import envInitializer
 import rtsUtils
-import sys
-sys.path.append('../')  # Add the outer folder to the sys.path 
+
+
+
 
 
 if __name__ == "__main__":
@@ -28,7 +31,7 @@ if __name__ == "__main__":
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
     envs = envInitializer.envInitializer(args)
-    model = agentSetup.Agent(envs).to(device)
+    model = agentSetup.AgentSmall(envs).to(device)
     invalid_action_shape = (args.mapsize, envs.action_plane_space.nvec.sum())
 
     # TRY NOT TO MODIFY: start the game
@@ -68,7 +71,7 @@ if __name__ == "__main__":
             for idx, info in enumerate(infos):
                 if "episode" in info.keys():
                     if args.ai:
-                       rounds += 1
+                       rounds =rounds + 1
                        modelScore, aiScore = rtsUtils.calculateWinRate(rounds, modelScore, aiScore, info["microrts_stats"]["WinLossRewardFunction"])
 
 
