@@ -72,6 +72,7 @@ if __name__ == "__main__":
                 if "episode" in info.keys():
                     if args.ai:
                        rounds =rounds + 1
+                       print(info["episode"])
                        modelScore, aiScore = rtsUtils.calculateWinRate(rounds, modelScore, aiScore, info["microrts_stats"]["WinLossRewardFunction"])
 
 
