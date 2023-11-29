@@ -18,7 +18,7 @@ def parse_args():
         help='if toggled, the game will have partial observability')
     parser.add_argument("--agent-model-path", type=str, default=f"models/agent.pt",
         help="the path to the agent's model")
-    parser.add_argument('--ai', type=str, default="workerRushAI",
+    parser.add_argument('--ai', type=str, default="coacAI",
         help='the opponent AI to evaluate against')
     parser.add_argument('--train-maps', nargs='+', default=["maps/16x16/basesWorkers16x16A.xml"],
         help='the list of maps used during training')
@@ -26,8 +26,9 @@ def parse_args():
         help='the discount factor gamma')
     args = parser.parse_args()
 
-    if args.ai:
-        args.num_bot_envs, args.num_selfplay_envs = 1, 0
+    args.selfplay = False
+    if  args.selfplay:
+        args.num_bot_envs, args.num_selfplay_envs = 1, 0    
     else:
         args.num_bot_envs, args.num_selfplay_envs = 0, 2
 
@@ -39,8 +40,8 @@ def parse_args():
     args.mapsize = 16*16
     args.experiment_name = "eval"
     args.record_video = False
-    args.ai2s=[eval(f"microrts_ai.{args.ai}")]
+    args.ai2s= [ (eval(f"microrts_ai.{args.ai}")) if args.selfplay else 0 ]
     args.reward_weights = np.array([10.0, 1.0, 1.0, 0.2, 1.0, 4.0])
     args.max_env_steps =2048
-    "current test mayrai + ranged nrush from shitpc2"
+    #std_paper_plus_Reduced_worker_reward vs worker
     return args
