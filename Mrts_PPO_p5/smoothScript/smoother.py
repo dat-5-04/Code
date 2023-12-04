@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-name = "model4_winrate"
+name = "model_42_lk"
 
 plt.switch_backend('Qt5Agg')
 df = pd.read_csv(f"{name}.csv")
